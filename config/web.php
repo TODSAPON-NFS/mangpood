@@ -60,12 +60,14 @@ $config = [
             'enableStrictParsing' => false,
         //'suffix' => '.html', //เติมนามสกุลให้ไฟล์
         ],
+        'thaiFormatter' => [
+            'class' => 'dixonsatit\thaiYearFormatter\ThaiYearFormatter',
+        ],
     ],
     'params' => $params,
 ];
 
 if (YII_ENV_DEV) { // <== ถ้าพัฒนาเสร็จแล้ว แก้ YII_ENV_DEV เป็น YII_ENV_PROD แทน
-
 // configuration adjustments for 'dev' environment
     $config['bootstrap'][] = 'debug';
     $config['modules']['debug'] = [

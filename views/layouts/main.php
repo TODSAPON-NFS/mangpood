@@ -17,7 +17,7 @@ AppAsset::register($this);
     <head>
         <meta charset="<?= Yii::$app->charset ?>">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <?php View::registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => 'favicon.ico']); ?>
+        <?php View::registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii::getAlias('@web') . '/favicon.ico']); ?>
         <?= Html::csrfMetaTags() ?>
         <title><?= Html::encode($this->title) ?></title>
         <?php $this->head() ?>
@@ -37,11 +37,16 @@ AppAsset::register($this);
                 ],
             ]);
 
-            $menuItems_left = [
-                ['label' => 'Home', 'url' => ['/site/index']],
-                ['label' => 'About', 'url' => ['/site/about']],
-                ['label' => 'Contact', 'url' => ['/site/contact']],
-            ];
+            if (Yii::$app->user->isGuest) {
+                $menuItems_left = [];
+            } else {
+                $menuItems_left = [
+                    ['label' => 'Home', 'url' => ['/site/index']],
+                    ['label' => 'กลุ่มสินค้า', 'url' => ['/category/index']],
+                    ['label' => 'สินค้า', 'url' => ['/product/index']],
+                    ['label' => 'Contact', 'url' => ['/site/contact']],
+                ];
+            }
 
             $menuItems_right = [
                 Yii::$app->user->isGuest ? (
@@ -57,7 +62,7 @@ AppAsset::register($this);
                 'encodeLabels' => false, //เพื่อให้แทรก html ได้
                 'items' => $menuItems_left
             ]);
-            
+
             echo Nav::widget([
                 'options' => ['class' => 'navbar-nav navbar-right'],
                 'encodeLabels' => false, //เพื่อให้แทรก html ได้
@@ -81,7 +86,7 @@ AppAsset::register($this);
             <div class="container">
                 <p class="pull-left">&copy; Mangpood Inc. <?= date('Y') ?></p>
 
-                <p class="pull-right"><?= Yii::powered(); ?> <i class="fa fa-github-alt fa-2x" aria-hidden="true" style="color:#ff6600;vertical-align: middle;margin-left:5px;"></i> <i class="fa fa-font-awesome fa-2x" aria-hidden="true" style="color:#ff6600;vertical-align: middle;margin-left:5px;"></i> <i class="fa fa-html5 fa-2x" aria-hidden="true" style="color:#ff6600;vertical-align: middle;margin-left:5px;"></i> <i class="fa fa-css3 fa-2x" aria-hidden="true" style="color:#ff6600;vertical-align: middle;"></i></p>
+                <p class="pull-right hidden-xs"><?= Yii::powered(); ?> <i class="fa fa-github-alt fa-lg" aria-hidden="true" style="color:#ff6600;vertical-align: middle;margin-left:5px;"></i> <i class="fa fa-font-awesome fa-lg" aria-hidden="true" style="color:#ff6600;vertical-align: middle;margin-left:5px;"></i> <i class="fa fa-html5 fa-lg" aria-hidden="true" style="color:#ff6600;vertical-align: middle;margin-left:5px;"></i> <i class="fa fa-css3 fa-lg" aria-hidden="true" style="color:#ff6600;vertical-align: middle;"></i></p>
             </div>
         </footer>
 
