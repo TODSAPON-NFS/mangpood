@@ -56,11 +56,11 @@ class SiteController extends Controller {
 
     public function actionLogin() {
         if (!Yii::$app->user->isGuest) {
-           return $this->goHome();
+            return $this->goHome();
         }
 
         $model = new LoginForm(); //สร้าง Instance loginForm (Model) ขึ้นมา
-        
+
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack();
         }
@@ -90,6 +90,19 @@ class SiteController extends Controller {
 
     public function actionAbout() {
         return $this->render('about');
+    }
+
+    //เข้าโหมด Reset ค่า Auto Increment ของตารางให้เป็น 1
+
+    public function actionReset() {
+
+        $table = trim(Yii::$app->request->get("table"));
+
+        $sql = "ALTER TABLE {$table} AUTO_INCREMENT = 1";
+
+        Yii::$app->db->createCommand($sql)->execute();
+
+        echo "Reset Auto Increment ตาราง <strong>" . $table . "</strong> เสร็จแล้ว";
     }
 
 }

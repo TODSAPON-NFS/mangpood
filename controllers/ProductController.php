@@ -3,16 +3,17 @@
 namespace app\controllers;
 
 use Yii;
+use app\models\Product;
 use app\models\Category;
-use app\models\CategorySearch;
+use app\models\ProductSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * CategoryController implements the CRUD actions for Category model.
+ * ProductController implements the CRUD actions for Product model.
  */
-class CategoryController extends Controller {
+class ProductController extends Controller {
 
     public function behaviors() {
         return [
@@ -27,9 +28,9 @@ class CategoryController extends Controller {
     }
 
     public function actionIndex() {
-        $searchModel = new CategorySearch();
-        $model = new Category();
-        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams); // <== รับค่าแบบ get
+        $searchModel = new ProductSearch();
+        $model = new Product(); //<== เพิ่มตรงนี้
+        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider = $searchModel->search(Yii::$app->request->post());
 
         return $this->render('index', [
@@ -40,13 +41,20 @@ class CategoryController extends Controller {
     }
 
     public function actionView($id) {
+
+        $modelCategory = new Category();
+        $model = $this->findModel($id);
+        
+        $modelCategoryQuery = $modelCategory->find()->where(['category_id' => $model->category_id])->one();
+
         return $this->render('view', [
-                    'model' => $this->findModel($id),
+                    'model' => $model,
+                    'modelCategory' => $modelCategoryQuery,
         ]);
     }
 
     public function actionCreate() {
-        $model = new Category();
+        $model = new Product();
 
         //Ajax Validation อย่าลืมไปเพิ่ม 'enableAjaxValidation' => true, ใน ActiveForm::begin([]);
         if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
@@ -55,7 +63,7 @@ class CategoryController extends Controller {
         }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->category_id]);
+            return $this->redirect(['view', 'id' => $model->product_id]);
         } else {
             return $this->render('create', [
                         'model' => $model,
@@ -73,7 +81,7 @@ class CategoryController extends Controller {
         }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->category_id]);
+            return $this->redirect(['view', 'id' => $model->product_id]);
         } else {
             return $this->render('update', [
                         'model' => $model,
@@ -81,14 +89,12 @@ class CategoryController extends Controller {
         }
     }
 
-    public function actionDelete() {
-
+    public function actionDelete() { // <== แก้ตรงนี้
         if (Yii::$app->request->post('id')) {
 
             $id = Yii::$app->request->post('id');
             $this->findModel($id)->delete();
         }
-
 
         return $this->redirect(['index']);
     }
@@ -99,14 +105,14 @@ class CategoryController extends Controller {
         if (Yii::$app->request->post('ids')) {
 
             $delete_multiple_id = explode(',', Yii::$app->request->post('ids'));
-            Category::deleteAll(['in', 'category_id', $delete_multiple_id]);
+            Product::deleteAll(['in', 'product_id', $delete_multiple_id]); //<== เพิ่ม + แก้ตรงนี้
         }
 
         return $this->redirect(['index']);
     }
 
     protected function findModel($id) {
-        if (($model = Category::findOne($id)) !== null) {
+        if (($model = Product::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

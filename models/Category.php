@@ -33,6 +33,7 @@ class Category extends ActiveRecord {
     public function rules() {
         return [
             [['category_name'], 'required'],
+            [['category_name'], 'trim'],
             [['category_name'], 'unique'],
             [['created_at', 'updated_at'], 'safe'], //ระบบอัตโนมัติ
             [['category_name'], 'string', 'max' => 50],

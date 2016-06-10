@@ -41,10 +41,17 @@ AppAsset::register($this);
                 $menuItems_left = [];
             } else {
                 $menuItems_left = [
-                    ['label' => 'Home', 'url' => ['/site/index']],
-                    ['label' => 'กลุ่มสินค้า', 'url' => ['/category/index']],
-                    ['label' => 'สินค้า', 'url' => ['/product/index']],
-                    ['label' => 'Contact', 'url' => ['/site/contact']],
+                    ['label' => '<i class="fa fa-home" aria-hidden="true" style="font-size:1em;vertical-align: baseline;"></i> <span class="visible-xs-inline">Home</span>', 'url' => ['/site/index']],
+                    ['label' => '<i class="fa fa-cubes" aria-hidden="true" style="font-size:1em;vertical-align: baseline;"></i> <span class="visible-xs-inline">สินค้า</span>',
+                        'items' => [
+                            '<li class="dropdown-header">จัดการสินค้า</li>',
+                            ['label' => '<i class="fa fa-cubes" aria-hidden="true" style="font-size:1em;vertical-align: baseline;"></i> กลุ่มสินค้า', 'url' => ['/category/index']],
+                            //'<li class="divider"></li>',
+                            ['label' => '<i class="fa fa-cube" aria-hidden="true" style="font-size:1em;vertical-align: baseline;"></i> สินค้า', 'url' => ['/product/index']],
+                        ],
+                    ],
+                    ['label' => '<i class="fa fa-users" aria-hidden="true" style="font-size:1em;vertical-align: baseline;"></i> <span class="visible-xs-inline">ลูกค้า คู่ค้า และ พันธมิตรธุรกิจ</span>', 'url' => ['/csa/index']],
+                    ['label' => '<i class="fa fa-phone-square" aria-hidden="true" style="font-size:1em;vertical-align: baseline;"></i> <span class="visible-xs-inline">ติดต่อเรา</span>', 'url' => ['/site/contact']],
                 ];
             }
 
@@ -73,11 +80,11 @@ AppAsset::register($this);
             ?>
 
             <div class="container">
-                <?=
-                Breadcrumbs::widget([
-                    'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-                ])
-                ?>
+<?=
+Breadcrumbs::widget([
+    'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+])
+?>
                 <?= $content ?>
             </div>
         </div>
@@ -90,7 +97,7 @@ AppAsset::register($this);
             </div>
         </footer>
 
-        <?php $this->endBody() ?>
+<?php $this->endBody() ?>
     </body>
 </html>
 <?php $this->endPage() ?>

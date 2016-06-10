@@ -63,6 +63,9 @@ $config = [
         'thaiFormatter' => [
             'class' => 'dixonsatit\thaiYearFormatter\ThaiYearFormatter',
         ],
+        'formatter' => [
+            'currencyCode' => 'THB',
+        ],
     ],
     'params' => $params,
 ];

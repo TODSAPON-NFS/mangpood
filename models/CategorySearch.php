@@ -13,7 +13,7 @@ use app\models\DeleteAllForm;
  */
 class CategorySearch extends Category {
 
-    public $q;
+    public $q; //<== เพิ่มตรงนี้
 
     /**
      * @inheritdoc
@@ -21,7 +21,7 @@ class CategorySearch extends Category {
     public function rules() {
         return [
             [['category_id', 'created_at', 'updated_at'], 'integer'],
-            [['category_name', 'q'], 'safe'],
+            [['category_name', 'q'], 'safe'], //<== เพิ่มตรงนี้
         ];
     }
 
@@ -46,6 +46,14 @@ class CategorySearch extends Category {
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pageSize' => 100,
+            ],
+            'sort' => [
+                'defaultOrder' => [
+                    'category_id' => SORT_DESC,
+                ]
+            ]
         ]);
 
         $this->load($params);
@@ -66,7 +74,7 @@ class CategorySearch extends Category {
           ]);
          */
 
-        $query->orFilterWhere(['like', 'category_name', $this->q]);
+        $query->orFilterWhere(['like', 'category_name', $this->q]); //<== เพิ่มตรงนี้
 
         return $dataProvider;
     }

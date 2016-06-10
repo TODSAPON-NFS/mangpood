@@ -22,14 +22,14 @@ $(document).on("click", "#btnDeleteOne", function(event){
     var var_name = $(this).data("name");
     
     bootbox.dialog({
-         message: "โปรดเลือก <span class=\"label label-danger\">ลบข้อมูล</span> เพื่อยืนยันการลบรายการ <span class=\"label\" style=\"border: 1px solid #ccc;background-color:#fff;color:#333;\">"+ var_id + " : " + var_name +"</span> หรือเลือก <span class=\"label label-default\">ปิด</span> เพื่อยกเลิกการลบข้อมูล",
+         message: "โปรดเลือก <span class=\"label label-danger\">ลบข้อมูล</span> เพื่อยืนยันการลบรายการ หรือเลือก <span class=\"label label-default\">ปิด</span> เพื่อยกเลิกการลบข้อมูล<br /><br /><span class=\"badge\"><i class=\"fa fa-exclamation-circle\" aria-hidden=\"true\"></i> หมายเหตุ</span> การลบกลุ่มสินค้าจะสำเร็จได้ต่อเมื่อ<u>ไม่มี</u> &quot;สินค้า&quot; อยู่ภายใต้ &quot;กลุ่มสินค้า&quot; นี้",
          title: "<i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\" style=\"color:#d9534f;\"></i> ยืนยันการลบข้อมูล",
          buttons: {
             success: {
                 label: "ลบข้อมูล",
                 className: "btn-danger",
                 callback: function() {
-                    $.post("' . Url::toRoute([\app\models\Category::CONTROLLER_ACTION_DELETEONE]) . '", {id: var_id});
+                    $.post("' . Url::toRoute([$model::CONTROLLER_ACTION_DELETEONE]) . '", {id: var_id});
                     },
                 },
             close: {
@@ -47,7 +47,7 @@ $(document).on("click", "#btnDeleteOne", function(event){
 
 <div class="category-view">
 
-    <h2 style="display:inline;"><i class="fa fa-cubes" aria-hidden="true"></i> แสดงกลุ่มสินค้า</h2>
+    <h2 style="display:inline;"><i class="fa fa-cubes" aria-hidden="true"></i> <?= Html::encode($this->title) ?></h2>
     <div class="pull-right" style="margin-bottom: 20px;">
 
         <?= Html::a("<i class=\"fa fa-plus-square fa-lg\" aria-hidden=\"true\" style=\"margin-right:7px;\"></i>" . Yii::t("app", "<strong>เพิ่มกลุ่มสินค้า</strong>"), ["create"], ["class" => "btn btn-info btn-sm","style" => "margin: 4px 1px 0px 1px;"]) ?>
@@ -65,7 +65,7 @@ $(document).on("click", "#btnDeleteOne", function(event){
         'attributes' => [
             [
                 'attribute' => 'category_name',
-                'label' => 'ชื่อกลุ่มสินค้า',
+                'label' => '[รหัส] ชื่อกลุ่มสินค้า',
                 'format' => 'html',
                 'value' => '<span class="label label-pill label-primary" style="background-color:#ff6600;vertical-align:middle;">ID : ' . $model->category_id . '</span> &nbsp;<strong style="font-size:1.5em;vertical-align:middle;line-height:20px;">' . $model->category_name . '</strong>',
             ],
@@ -75,7 +75,7 @@ $(document).on("click", "#btnDeleteOne", function(event){
             ],
             [
                 'attribute' => 'updated_at',
-                'value' => Yii::$app->formatter->asDate($model->updated_at, "php: d/m/Y H:i:s")
+                'value' => Yii::$app->formatter->asDate($model->updated_at, "php: d/m/Y H:i:s").' ('.Yii::$app->formatter->asRelativeTime($model->updated_at).')',
             ],
         ],
     ])
