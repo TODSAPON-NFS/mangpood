@@ -3,26 +3,22 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\Category;
-use app\models\CategorySearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\models\PipelineForm;
 use yii\filters\AccessControl;
 
-/**
- * CategoryController implements the CRUD actions for Category model.
- */
-class CategoryController extends Controller {
+class PipelineController extends Controller {
 
     public function behaviors() {
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['index', 'create', 'view', 'update', 'delete', 'deleteall'],
+                'only' => ['index', 'create', 'view', 'update', 'delete', 'deleteall', 'pipeline'],
                 'rules' => [
                     [
-                        'actions' => ['index', 'create', 'view', 'update', 'delete', 'deleteall'],
+                        'actions' => ['index', 'create', 'view', 'update', 'delete', 'deleteall', 'pipeline'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -51,26 +47,15 @@ class CategoryController extends Controller {
     }
 
     public function actionIndex() {
-        $searchModel = new CategorySearch();
-        $model = new Category();
-        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams); // <== รับค่าแบบ get
-        $dataProvider = $searchModel->search(Yii::$app->request->post());
+        $model = new PipelineForm();
 
-        return $this->render('index', [
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
+        return $this->render("index", [
                     'model' => $model,
         ]);
     }
 
-    public function actionView($id) {
-        return $this->render('view', [
-                    'model' => $this->findModel($id),
-        ]);
-    }
-
     public function actionCreate() {
-        $model = new Category();
+        $model = new PipelineForm();
 
         //Ajax Validation อย่าลืมไปเพิ่ม 'enableAjaxValidation' => true, ใน ActiveForm::begin([]);
         if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
@@ -87,8 +72,12 @@ class CategoryController extends Controller {
         }
     }
 
-    public function actionUpdate($id) {
-        $model = $this->findModel($id);
+    public function actionPipeline() {
+
+//$model = Yii::$app->request->post();
+//echo $model["PipelineForm"]["csa_name_surname"];
+
+        $model = new PipelineForm();
 
         //Ajax Validation อย่าลืมไปเพิ่ม 'enableAjaxValidation' => true, ใน ActiveForm::begin([]);
         if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
@@ -96,45 +85,29 @@ class CategoryController extends Controller {
             return \yii\bootstrap\ActiveForm::validate($model);
         }
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->category_id]);
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate()) {
+                
+                print_r($model);
+
+                echo "เรียบร้อยจ้าx";   
+
+            } else {
+                
+                return $this->render('create', [
+                'model' => $model,
+                    ]);
+                
+            }
         } else {
-            return $this->render('update', [
-                        'model' => $model,
-            ]);
+            echo "ติดตรงนี้ 2x";
         }
     }
-
-    public function actionDelete() {
-
-        if (Yii::$app->request->post('id')) {
-
-            $id = Yii::$app->request->post('id');
-            $this->findModel($id)->delete();
-        }
-
-
-        return $this->redirect(['index']);
-    }
-
-    //ลบแบบเลือกหลายรายการ
-    public function actionDeleteall() {
-
-        if (Yii::$app->request->post('ids')) {
-
-            $delete_multiple_id = explode(',', Yii::$app->request->post('ids'));
-            Category::deleteAll(['in', 'category_id', $delete_multiple_id]);
-        }
-
-        return $this->redirect(['index']);
-    }
-
-    protected function findModel($id) {
-        if (($model = Category::findOne($id)) !== null) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
+    
+    public function actionPipelineajaxmultiply() {
+        $q1 = trim(Yii::$app->request->get("q1"));
+        $q2 = trim(Yii::$app->request->get("q2"));
+        return $q1*$q2;
     }
 
 }

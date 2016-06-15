@@ -6,21 +6,46 @@ use Yii;
 use app\models\Csa;
 use app\models\District;
 use app\models\Subdistrict;
+use app\models\Province;
 use app\models\CsaSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 class CsaController extends Controller {
-
-    public function behaviors() {
+    
+        public function behaviors() {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['index','create','view','update','delete','deleteall','district','subdistrict','zipcode','namesuggestion','emailsuggestion','provincesuggestion','subdistrictsuggestion','districtsuggestion'],
+                'rules' => [
+                    [
+                        'actions' => ['index','create','view','update','delete','deleteall','district','subdistrict','zipcode','namesuggestion','emailsuggestion','provincesuggestion','subdistrictsuggestion','districtsuggestion'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
                     'deleteall' => ['POST'],
                 ],
+            ],
+        ];
+    }
+
+    public function actions() {
+        return [
+            'error' => [
+                'class' => 'yii\web\ErrorAction',
+            ],
+            'captcha' => [
+                'class' => 'yii\captcha\CaptchaAction',
+                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
         ];
     }
@@ -54,11 +79,11 @@ class CsaController extends Controller {
         }
 
         if ($model->load(Yii::$app->request->post())) {
-            
-            //เติมคำว่า "คุณ" เข้าไปข้างหน้า
-            $model->csa_name_surname = (strpos($model->csa_name_surname, 'คุณ') === 0) ? $model->csa_name_surname : 'คุณ' . $model->csa_name_surname; 
 
-            if($model->save()){
+            //เติมคำว่า "คุณ" เข้าไปข้างหน้า
+            $model->csa_name_surname = (strpos($model->csa_name_surname, 'คุณ') === 0) ? $model->csa_name_surname : 'คุณ' . $model->csa_name_surname;
+
+            if ($model->save()) {
                 return $this->redirect(['view', 'id' => $model->csa_id]);
             }
         } else {
@@ -140,11 +165,7 @@ class CsaController extends Controller {
         echo '<option value="">เลือกตำบล / แขวง</option>';
 
         foreach ($subdistrictQuery as $value) {
-            if ($value['subdistrict_id'] >= 1 && $value['subdistrict_id'] <= 178) {
-                echo '<option value="' . $value['subdistrict_id'] . '">แขวง' . $value['subdistrict_name'] . '</option>';
-            } else {
-                echo '<option value="' . $value['subdistrict_id'] . '">ตำบล' . $value['subdistrict_name'] . '</option>';
-            }
+                echo '<option value="' . $value['subdistrict_id'] . '">'.$value['subdistrict_name'].'</option>';
         }
     }
 
@@ -162,35 +183,78 @@ class CsaController extends Controller {
     }
 
     public function actionNamesuggestion() {
-        
+
         $model = new Csa();
 
         $q = trim(Yii::$app->request->get("q"));
 
-        $suggestion = Csa::find()->select(['csa_name_surname','csa_email','csa_province_id','csa_phone'])->where(['like', 'csa_name_surname', $q])->asArray()->all();
+        $suggestion = Csa::find()->where(['like', 'csa_name_surname', $q])->asArray()->all();
 
         //Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        
         //return $suggestion;
-        
+
         foreach ($suggestion as $key => $value) {
-            $array[$key]['label'] = $value['csa_name_surname'].' ('.$value['csa_email'].' '.$value['csa_phone'].' '.$model::provinceNameRequest($value['csa_province_id']).')';
+            $array[$key]['label'] = $value['csa_name_surname'] . ' (' . $value['csa_email'] . ' ' . $value['csa_phone'] . ' ' . $model::provinceNameRequest($value['csa_province_id']) . ')';
             $array[$key]['value'] = $value['csa_name_surname'];
+            $array[$key]['id'] = $value['csa_id'];
+            $array[$key]['address'] = $value['csa_address'];
+            $array[$key]['phone'] = $value['csa_phone'];
+            $array[$key]['email'] = $value['csa_email'];
+            $array[$key]['province'] = $model::provinceNameRequest($value['csa_province_id']);
+            $array[$key]['district'] = $model::districtNameRequest($value['csa_district_id']);
+            $array[$key]['subdistrict'] = $model::subdistrictNameRequest($value['csa_subdistrict_id']);
+            $array[$key]['zipcode'] = $value['csa_zipcode'];
+            $array[$key]['note'] = $value['csa_note'];
+            $array[$key]['socialmedia'] = $value['csa_socialmedia'];
+            $array[$key]['company'] = $value['csa_company'];
+            $array[$key]['type'] = $value['csa_type'];
         }
-        
+
         //print_r($array);
         //echo "<br /><br />";
         //echo json_encode($array, JSON_UNESCAPED_UNICODE);
-        
-        return json_encode($array, JSON_UNESCAPED_UNICODE);
 
+        return json_encode($array, JSON_UNESCAPED_UNICODE);
     }
-    
+
     public function actionEmailsuggestion() {
 
         $q = trim(Yii::$app->request->get("q"));
 
         $suggestion = Csa::find()->select(['csa_email as value', 'csa_email as label'])->where(['like', 'csa_email', $q])->asArray()->all();
+
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        return $suggestion;
+    }
+
+    public function actionProvincesuggestion() {
+
+        $q = trim(Yii::$app->request->get("q"));
+
+        $suggestion = Province::find()->select(['province_name as value', 'province_name as label'])->where(['like', 'province_name', $q])->asArray()->all();
+
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        return $suggestion;
+    }
+
+    public function actionSubdistrictsuggestion() {
+
+        $q = trim(Yii::$app->request->get("q"));
+
+        $suggestion = Subdistrict::find()->select(['subdistrict_name as value', 'subdistrict_name as label'])->distinct()->where(['like', 'subdistrict_name', $q])->asArray()->all();
+
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        return $suggestion;
+    }
+    
+    public function actionDistrictsuggestion() {
+
+        $q = trim(Yii::$app->request->get("q"));
+
+        $suggestion = District::find()->select(['district_name as value', 'district_name as label'])->distinct()->where(['like', 'district_name', $q])->asArray()->all();
 
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 

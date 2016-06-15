@@ -92,6 +92,17 @@ class Csa extends ActiveRecord {
         if($this->csa_name_surname == trim("คุณ")){
             $this->addError('csa_name_surname', 'กรุณาเติม ชื่อ - นามสกุล หลังคำว่า "คุณ" ด้วย');
         }
+        
+        //ถ้า csa_name_surname ไม่มีคำว่า "คุณ" หรือ คำว่า "คุณ" ไม่อยู่ในตำแหน่งแรก
+        if(strpos($this->csa_name_surname, "คุณ") == null || strpos($this->csa_name_surname, "คุณ") != 0){
+            $csa_name_surname = 'คุณ'.trim($this->csa_name_surname).'';
+            
+            $count = Csa::find()->where(['csa_name_surname' => $csa_name_surname])->count();
+            
+            if($count > 0){
+                $this->addError('csa_name_surname', 'ชื่อ - นามสกุล "'.$csa_name_surname.'" ถูกใช้ไปแล้ว');
+            }
+        }
 
     }
     
@@ -125,11 +136,8 @@ class Csa extends ActiveRecord {
                         'subdistrict_id' => $subdistrict_id,
             ]);
 
-            if ($modelSubDistrict->subdistrict_id >= 1 && $modelSubDistrict->subdistrict_id <= 178) {
-                return ' แขวง' . $modelSubDistrict->subdistrict_name;
-            } else {
-                return ' ตำบล' . $modelSubDistrict->subdistrict_name;
-            }
+                return $modelSubDistrict->subdistrict_name;
+
         } else {
             return false;
         }

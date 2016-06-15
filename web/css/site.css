@@ -131,6 +131,20 @@ a.desc:after {
 
 /* เพิ่มเข้ามาเอง */
 
-h2 {
+h2, h3 {
     font-family: 'rsubold';
+}
+
+.summary { 
+        margin-bottom:10px; 
+        }
+    .label-group>.label:first-child {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        margin-right: 0;
+}
+    .label-group>.label:nth-child(2) {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        margin-left: 0;
 }

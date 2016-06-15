@@ -78,7 +78,7 @@ $(document).on("click", "#btnDeleteOne", function(event){
                         'attribute' => 'product_name',
                         'label' => '[รหัส] ชื่อสินค้า',
                         'format' => 'html',
-                        'value' => '<span class="label label-pill label-primary" style="background-color:#ff6600;vertical-align:middle;">ID : ' . $model->product_id . '</span> &nbsp;<strong style="font-size:1.5em;vertical-align:middle;line-height:20px;">' . $model->product_name . '</strong>',
+                        'value' => '<span class="label label-pill label-primary" style="background-color:#ff6600;vertical-align:middle;">ID : ' . $model->product_code . '</span> &nbsp;<strong style="font-size:1.5em;vertical-align:middle;line-height:20px;">' . $model->product_name . '</strong>',
                     ],
                     [
                         'attribute' => 'category_id',

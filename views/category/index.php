@@ -14,7 +14,6 @@ use yii\widgets\Pjax;
 $this->title = 'กลุ่มสินค้า';
 $this->params['breadcrumbs'][] = $this->title;
 //$this->registerJsFile('@web/js/category.index.php.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
-$this->registerCss(".summary { margin-bottom:10px; }");
 
 /* ลบทีละหลายรายการ */
 $this->registerJs('

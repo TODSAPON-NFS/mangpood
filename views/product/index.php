@@ -11,7 +11,6 @@ use yii\widgets\Pjax;
 
 $this->title = 'สินค้า';
 $this->params['breadcrumbs'][] = $this->title;
-$this->registerCss(".summary { margin-bottom:10px; }");
 
 /* ลบทีละหลายรายการ */
 $this->registerJs('
@@ -162,9 +161,12 @@ $(document).on("click", "#btnDeleteOne", function(event){
                 'contentOptions' => [
                     'noWrap' => true,
                 ],
-                'format' => 'html', //แสดงผลเป็น HTML
+                'format' => 'raw', //แสดงผลเป็น HTML
                 'value' => function($model) {
-            return '<span class="label label-pill label-primary" style="background-color:#ff6600;">ID : ' . $model->product_id . '</span> ' . Html::a('<strong>' . $model->product_name . '</strong>', [$model::CONTROLLER_ACTION_VIEW, "id" => $model->product_id], ["data-pjax" => "0"]);
+        
+        $model_status = ($model->product_status == 1) ? '<span class="label label-success"><i class="fa fa-eye" aria-hidden="true"></i></span>' : '<span class="label label-danger"><i class="fa fa-eye-slash" aria-hidden="true"></i></span>';
+        
+            return '<div class="label-group" style="display:inline;"><span class="label label-primary" style="background-color:#ff6600;">' . $model->product_code . '</span>' . $model_status .'</div> '. Html::a('<strong>' . $model->product_name . '</strong>', [$model::CONTROLLER_ACTION_VIEW, "id" => $model->product_id], ["data-pjax" => "0"]);
         }
             ],
             [
@@ -243,34 +245,6 @@ $(document).on("click", "#btnDeleteOne", function(event){
                 
                 },
             ],
-            // 'product_cost_per_unit_updated',
-            // 'product_discount',
-            [
-                'attribute' => 'created_at',
-                'contentOptions' => [
-                    'noWrap' => true,
-                    'style' => 'text-align:center;'
-                ],
-                'headerOptions' => [
-                    'style' => 'text-align:center;'
-                ],
-                'value' => function($model) {
-            return Yii::$app->formatter->asDate($model->created_at, 'php: d/m/Y H:i:s');
-        }
-            ],
-            [
-                'attribute' => 'updated_at',
-                'contentOptions' => [
-                    'noWrap' => true,
-                    'style' => 'text-align:center;'
-                ],
-                'headerOptions' => [
-                    'style' => 'text-align:center;'
-                ],
-                'value' => function($model) {
-            return Yii::$app->formatter->asDate($model->updated_at, 'php: d/m/Y H:i:s');
-        }
-            ],
             [
                 'attribute' => 'product_stock_alert',
                 'format' => 'raw',
@@ -304,19 +278,34 @@ $(document).on("click", "#btnDeleteOne", function(event){
                 
                 },
             ],
+            // 'product_cost_per_unit_updated',
+            // 'product_discount',
             [
-                'attribute' => 'product_status',
-                'format' => 'raw',
-                'headerOptions' => ['style' => 'text-align:center;'],
+                'attribute' => 'created_at',
                 'contentOptions' => [
                     'noWrap' => true,
                     'style' => 'text-align:center;'
                 ],
+                'headerOptions' => [
+                    'style' => 'text-align:center;'
+                ],
                 'value' => function($model) {
-
-            return ($model->product_status == 1) ? '<label class="label label-pill label-success"><i class="fa fa-eye" aria-hidden="true"></i></label>' : '<label class="label label-pill label-danger"><i class="fa fa-eye-slash" aria-hidden="true"></i></label>';
-        },
+            return Yii::$app->formatter->asDate($model->created_at, 'php: d/m/Y H:i:s');
+        }
             ],
+            [
+                'attribute' => 'updated_at',
+                'contentOptions' => [
+                    'noWrap' => true,
+                    'style' => 'text-align:center;'
+                ],
+                'headerOptions' => [
+                    'style' => 'text-align:center;'
+                ],
+                'value' => function($model) {
+            return Yii::$app->formatter->asDate($model->updated_at, 'php: d/m/Y H:i:s');
+        }
+            ], 
             [
                 'class' => 'yii\grid\ActionColumn',
                 'buttons' => [

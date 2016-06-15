@@ -11,7 +11,6 @@ use yii\widgets\Pjax;
 
 $this->title = 'ลูกค้า คู่ค้า และพันธมิตรธุรกิจ';
 $this->params['breadcrumbs'][] = 'ลูกค้า คู่ค้า และพันธมิตรธุรกิจ (CSA)';
-$this->registerCss(".summary { margin-bottom:10px; }");
 
 /* ลบทีละหลายรายการ */
 $this->registerJs('

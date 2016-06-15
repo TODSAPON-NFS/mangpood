@@ -70,6 +70,30 @@ function callback(result){$("#csaZipcode").val(result);}
 
 });
 
+function checkContactEmpty(){
+
+    if((($("#csa-csa_phone").val() == "") && $("#csa-csa_email").val() == "") && ($("#csa-csa_socialmedia").val() == ""))
+        {
+        $(".field-csa-csa_phone").addClass("has-error");
+        $(".field-csa-csa_email").addClass("has-error");
+        $(".field-csa-csa_socialmedia").addClass("has-error");
+        return false;
+        }
+    else{
+        $(".field-csa-csa_phone").removeClass("has-error");
+        $(".field-csa-csa_email").removeClass("has-error");
+        $(".field-csa-csa_socialmedia").removeClass("has-error");
+        $(".field-csa-csa_phone").addClass("has-success");
+        $(".field-csa-csa_email").addClass("has-success");
+        $(".field-csa-csa_socialmedia").addClass("has-success");
+        return true;
+    }
+
+}
+
+$("#csaSubmit").on("click", function(){return checkContactEmpty();});
+$("#csa-csa_phone, #csa-csa_email, #csa-csa_socialmedia").on("change focus", function(){return checkContactEmpty();});
+
 ', \yii\web\View::POS_READY);
 ?>
 
@@ -87,14 +111,24 @@ function callback(result){$("#csaZipcode").val(result);}
                         ],
             ]);
             ?>
+            <div class="row">
+                <div class="col-sm-9">
 
-<?= $form->field($model, 'csa_name_surname')->widget(AutoComplete::className(), [
-    'clientOptions' => [
-        'autoFill'=>true,
-        'source' => new JsExpression('function(request, response){$.ajax({url:"'.Url::to(["csa/namesuggestion"]).'", dataType: "json", data:{q: request.term}, success: function(result){response(result);}});}'),
-    ],
-])->textInput(['maxlength' => true])
-?>
+                    <?=
+                    $form->field($model, 'csa_name_surname')->widget(AutoComplete::className(), [
+                        'clientOptions' => [
+                            'autoFill' => true,
+                            'source' => new JsExpression('function(request, response){$.ajax({url:"' . Url::to(["csa/namesuggestion"]) . '", dataType: "json", data:{q: request.term}, success: function(result){response(result);}});}'),
+                            'select' => new JsExpression('function(event, ui){$("#csaId").val(ui.item.id);}'),
+                        ],
+                    ])->textInput(['maxlength' => true])
+                    ?>
+
+                </div>
+                <div class="col-sm-3">
+<?= $form->field($model, 'csa_id')->textInput(['readonly' => true, 'id' => 'csaId', 'style' => 'text-align:center;']) ?>
+                </div>
+            </div>
 
 <?= $form->field($model, 'csa_type')->dropDownList([ 'Customer' => 'ลูกค้า (Customer)', 'Supplier' => 'คู่ค้า (Supplier)', 'Both' => 'เป็นทั้งลูกค้า และ คู่ค้า (Both)', 'Alliance' => 'พันธมิตรธุรกิจ (Alliance)',], ['options' => ['Customer' => ['Selected' => 'selected']], 'prompt' => 'เลือกสถานะลูกค้า คู่ค้า และ พันธมิตร'])->label('ประเภทลูกค้า คู่ค้า และ พันธมิตร'); ?>
 
@@ -102,44 +136,43 @@ function callback(result){$("#csaZipcode").val(result);}
             <?= $form->field($model, 'csa_company')->textInput(['maxlength' => true]) ?>
 
             <?= $form->field($model, 'csa_email')->widget(AutoComplete::className(), [
-    'clientOptions' => [
-        'autoFill'=>true,
-        'source' => new JsExpression('function(request, response){$.ajax({url:"'.Url::to(["csa/emailsuggestion"]).'", dataType: "json", data:{q: request.term}, success: function(result){response(result);}});}'),
-    ],
-])->textInput(['maxlength' => true])
-?>
+                'clientOptions' => [
+                    'autoFill' => true,
+                    'source' => new JsExpression('function(request, response){$.ajax({url:"' . Url::to(["csa/emailsuggestion"]) . '", dataType: "json", data:{q: request.term}, success: function(result){response(result);}});}'),
+                ],
+            ])->textInput(['maxlength' => true])
+            ?>
 
             <?= $form->field($model, 'csa_phone')->textInput(['maxlength' => true])->hint("ตัวอย่าง 0XX-XXX-XXXX (มือถือ), 02-XXX-XXXX (กทม. และ ปริมณฑล) หรือ 0XX-XXX-XXX (ตจว.)") ?>
 
             <?= $form->field($model, 'csa_socialmedia')->textInput(['maxlength' => true]) ?>
 
-            <?= $form->field($model, 'csa_address')->textarea(['rows' => 3, 'style' => 'resize: none;', "id" => "csaAddress"]) ?>
+                    <?= $form->field($model, 'csa_address')->textarea(['rows' => 3, 'style' => 'resize: none;', "id" => "csaAddress"]) ?>
             <div class="row">
                 <div class="col-sm-6">
-<?= $form->field($model, 'csa_province_id')->dropDownList($model::provinceDropdownList(), ['prompt' => 'เลือกจังหวัด', 'id' => 'csaProvince']) ?>
+                    <?= $form->field($model, 'csa_province_id')->dropDownList($model::provinceDropdownList(), ['prompt' => 'เลือกจังหวัด', 'id' => 'csaProvince']) ?>
                 </div>
                 <div class="col-sm-6" id="divCsaDistrict">
-<?= $form->field($model, 'csa_district_id')->dropDownList($model::districtDropdownList($model->csa_province_id), ['prompt' => 'เลือกอำเภอ / เขต', 'id' => 'csaDistrict']) ?>
+                    <?= $form->field($model, 'csa_district_id')->dropDownList($model::districtDropdownList($model->csa_province_id), ['prompt' => 'เลือกอำเภอ / เขต', 'id' => 'csaDistrict']) ?>
                 </div>
                 <div class="col-sm-6" id="divCsaSubDistrict">
-<?= $form->field($model, 'csa_subdistrict_id')->dropDownList($model::subdistrictDropdownList($model->csa_district_id), ['prompt' => 'เลือกตำบล / แขวง', 'id' => 'csaSubDistrict']) ?>
+                    <?= $form->field($model, 'csa_subdistrict_id')->dropDownList($model::subdistrictDropdownList($model->csa_district_id), ['prompt' => 'เลือกตำบล / แขวง', 'id' => 'csaSubDistrict']) ?>
                 </div>
                 <div class="col-sm-6" id="divCsaZipcode">
 <?= $form->field($model, 'csa_zipcode')->textInput(['maxlength' => true, "id" => "csaZipcode"]) ?>
                 </div>
             </div>
-            
-            <?= $form->field($model, 'csa_note')->textarea(['rows' => 4, 'style' => 'resize: none;']) ?>
+
+<?= $form->field($model, 'csa_note')->textarea(['rows' => 4, 'style' => 'resize: none;']) ?>
+
 
             <div class="form-group">
-                <div class="form-group">
-<?= Html::submitButton($model->isNewRecord ? '<i class="fa fa-plus-square fa-lg" aria-hidden="true" style="margin-right:7px;"></i>สร้างใหม่' : '<i class="fa fa-pencil-square" aria-hidden="true" style="margin-right:7px;"></i>ปรับปรุง', ['class' => $model->isNewRecord ? 'btn btn-info' : 'btn btn-primary']) ?>
-                </div>
+<?= Html::submitButton($model->isNewRecord ? '<i class="fa fa-plus-square fa-lg" aria-hidden="true" style="margin-right:7px;"></i>สร้างใหม่' : '<i class="fa fa-pencil-square" aria-hidden="true" style="margin-right:7px;"></i>ปรับปรุง', ['class' => $model->isNewRecord ? 'btn btn-info' : 'btn btn-primary', 'id' => 'csaSubmit']) ?>
             </div>
 
-<?php
-ActiveForm::end();
-?>
+            <?php
+            ActiveForm::end();
+            ?>
 
         </div>
     </div>

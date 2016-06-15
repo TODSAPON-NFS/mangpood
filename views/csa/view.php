@@ -119,7 +119,7 @@ $(document).on("click", "#btnDeleteOne", function(event){
                     [
                         'attribute' => 'csa_address',
                         'format' => 'raw',
-                        'value' => ($model->csa_address == "" && empty($model->csa_province_id) && empty($model->csa_district_id) && empty($model->csa_subdistrict_id) && empty($model->csa_zipcode)) ? '<label class="label label-pill label-danger">ไม่มีข้อมูล</label>' : nl2br($model->csa_address).'<p style="margin:0px;">'.$model::subdistrictNameRequest($model->csa_subdistrict_id).$model::districtNameRequest($model->csa_district_id).'</p><p style="margin:0px;">'.$model::provinceNameRequest($model->csa_province_id) .'</p><h4 style="margin:3px 0px 0px 0px;">'. $model::zipcodeRequest($model->csa_zipcode).'</h4>',
+                        'value' => ($model->csa_address == "" && empty($model->csa_province_id) && empty($model->csa_district_id) && empty($model->csa_subdistrict_id) && (empty($model->csa_zipcode) || $model->csa_zipcode == "00000")) ? '<label class="label label-pill label-danger">ไม่มีข้อมูล</label>' : nl2br($model->csa_address).'<p style="margin:0px;">'.$model::subdistrictNameRequest($model->csa_subdistrict_id).$model::districtNameRequest($model->csa_district_id).'</p><p style="margin:0px;">'.$model::provinceNameRequest($model->csa_province_id) .'</p><h4 style="margin:3px 0px 0px 0px;">'. $model::zipcodeRequest($model->csa_zipcode).'</h4>',
                     ],
                     [
                         'attribute' => 'csa_note',

@@ -1,0 +1,13 @@
+.pipeline-shrink {
+    height:70px;
+    overflow: hidden;
+}
+
+.pipeline-expand {
+    height: auto;
+    overflow: visible;
+}
+
+#site-index-pipeline-h2:hover, #pipeline-index-pipeline-h2:hover {
+    cursor: pointer;
+}

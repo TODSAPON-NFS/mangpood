@@ -42,6 +42,7 @@ AppAsset::register($this);
             } else {
                 $menuItems_left = [
                     ['label' => '<i class="fa fa-home" aria-hidden="true" style="font-size:1em;vertical-align: baseline;"></i> <span class="visible-xs-inline">Home</span>', 'url' => ['/site/index']],
+                    ['label' => '<i class="fa fa-table" aria-hidden="true" style="font-size:1em;vertical-align: baseline;"></i> <span class="visible-xs-inline">บันทึกเหตุการณ์ (Pipeline)</span>', 'url' => ['/pipeline/index']],
                     ['label' => '<i class="fa fa-cubes" aria-hidden="true" style="font-size:1em;vertical-align: baseline;"></i> <span class="visible-xs-inline">สินค้า</span>',
                         'items' => [
                             '<li class="dropdown-header">จัดการสินค้า</li>',
